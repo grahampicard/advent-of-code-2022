@@ -28,13 +28,13 @@ def score_game(text: str) -> int:
     return score
 
 
-def part_1_tests():
+def part_1():
+    # tests
     with open("2_test.txt", "r") as f:
         data = f.read()
     assert score_game(data) == 15
 
-
-def part_1():
+    # input
     with open("2_input.txt", "r") as f:
         data = f.read()
     print(score_game(data))
@@ -64,19 +64,17 @@ def score_second_game(text: str) -> int:
     return score
 
 
-def part_2_tests():
+def part_2():
+    # tests
     with open("2_test.txt", "r") as f:
         data = f.read()
     assert score_second_game(data) == 12
 
-
-def part_2():
+    # input
     with open("2_input.txt", "r") as f:
         data = f.read()
     print(score_second_game(data))
 
 
-part_1_tests()
 part_1()
-part_2_tests()
 part_2()
