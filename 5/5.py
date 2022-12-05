@@ -1,5 +1,6 @@
 import string
 
+
 def init_queues(queue_text: str) -> dict:
     queue_start = {}
     start = queue_text.split("\n")
@@ -17,9 +18,13 @@ def init_queues(queue_text: str) -> dict:
             count += 1
     return queue_start
 
+
 def parse_instruction(text: str) -> tuple:
-    n, src, dest = [int(val) for val in text.split() if set(string.digits).issuperset(val)]
+    n, src, dest = [
+        int(val) for val in text.split() if set(string.digits).issuperset(val)
+    ]
     return n, src - 1, dest - 1
+
 
 def rearrangement_9000(text: str) -> str:
     raw_start, raw_moves = text.split("\n\n")
@@ -51,7 +56,8 @@ def rearrangement_9001(text: str) -> str:
     message = ""
     for val in queues.values():
         message += val.pop()
-    return message    
+    return message
+
 
 def main() -> None:
     with open("5_test.txt", "r") as f:
@@ -66,5 +72,6 @@ def main() -> None:
     with open("5_input.txt", "r") as f:
         data = f.read()
         print(rearrangement_9001(data))
+
 
 main()
