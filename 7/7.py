@@ -1,63 +1,89 @@
-import copy
-
-class Node:
-    def __init__(self, name) -> None:
+class Tree:
+    def __init__(self, name, parent=None) -> None:
         self.directories = {}
         self.files = {}
         self.size = 0
         self.name = name
+        self.parent = parent
     
     def add_directory(self, directory_name) -> None:
-        self.directories[directory_name] = Node(directory_name)
+        self.directories[directory_name] = Tree(directory_name, self)
 
     def add_files(self, file_name, size) -> None:
         self.files[file_name] = size
 
-    def calculate_total_size(self) -> int:
+    def _calculate_sizes(self) -> int:
         total = 0
-        for file_size in self.files.values():
-            total += file_size
         for directory in self.directories.values():
-            total += directory.calculate_total_size()
+            total += directory._calculate_sizes()
+        for val in self.files.values():
+            total += val
         self.size = total
         return total
 
+    def _find_sizes(self, sizes=[]) -> list:
+        for directory in self.directories.values():
+            directory._find_sizes(sizes)
+        sizes.append(self.size)
+        return sizes
 
+    def get_sizes(self):
+        sizes = []
+        self._calculate_sizes()
+        return self._find_sizes(sizes)
 
-def read_terminal_output(text: str) -> Node:
-    tree = Node("")
+def read_terminal_output(text: str) -> Tree:
+    tree = Tree("")
     all_lines = text.split("\n")
-    for line in all_lines:
-        if "$ cd" in line:
-            name = line.split(" ")[-1]
-            # continue here
+    current_directory = tree
+    while all_lines:
+        line = all_lines.pop(0)
+        if line == "$ cd ..":
+            current_directory = current_directory.parent
 
-def get_sizes(tree: Node, sizes=[]) -> list:
-    if tree.directories:
-        for directory in tree.directories.values():
-            sizes = get_sizes(directory, sizes)
-    sizes.append(tree.size)
-    return sizes      
+        elif "$ cd" in line:
+            name = line.split(" ")[-1]
+            current_directory.add_directory(name)
+            current_directory = current_directory.directories[name]
+            
+        elif line == "$ ls":
+            buffer = []
+            while all_lines[0][0] != "$":
+                output = all_lines.pop(0)
+                buffer.append(output)
+                if not all_lines:
+                    break
+            for item in buffer:
+                val1, val2 = item.split(" ")
+                if val1 == "dir":
+                    current_directory.add_directory(val2)
+                elif val1.isnumeric():
+                    current_directory.add_files(val2, int(val1))
+        
+    return tree
 
 def part_1(text: str) -> int:
     tree = read_terminal_output(text)
-    all_sizes = [x for x in get_sizes(tree) if x <= 100000]
-    return sum(all_sizes)
+    values = tree.get_sizes()
+    return sum([x for x in values if x <= 100000])
+
+def part_2(text: str) -> int:
+    tree = read_terminal_output(text)
+    values = tree.get_sizes()
+    total_size = max(values)
+    free_space = 70000000 - total_size
+    return min([x for x in values if free_space + x >= 30000000])
 
 def part_1_tests():
     with open("7_test.txt", "r") as f:
         data = f.read()
+        t = part_1(data)
         assert part_1(data) == 95437
+        assert part_2(data) == 24933642
 
+    with open("7_input.txt", "r") as f:
+        data = f.read()
+        print(part_1(data))
+        print(part_2(data))
 
-
-
-
-a = Node()
-a.add_files('b.txt', 14848514)
-a.add_files('c.dat', 8504156)
-a.add_directory('a')
-a.directories['a'].add_directory('b')
-a.directories['a'].directories['b'].add_files('d', 34343)
-a.directories['a'].add_files('c', 10000000000)
-a.calculate_total_size()
+part_1_tests()
