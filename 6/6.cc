@@ -4,6 +4,7 @@
 #include <string.h>
 #include <map>
 #include <err.h>
+#include <cassert>
 
 int detect_marker(std::string input, int length)
 {
