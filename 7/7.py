@@ -27,7 +27,7 @@ class Tree:
         sizes.append(self.size)
         return sizes
 
-    def get_sizes(self):
+    def get_sizes(self) -> list:
         sizes = []
         self._calculate_sizes()
         return self._find_sizes(sizes)
@@ -74,7 +74,7 @@ def part_2(text: str) -> int:
     free_space = 70000000 - total_size
     return min([x for x in values if free_space + x >= 30000000])
 
-def part_1_tests():
+def main():
     with open("7_test.txt", "r") as f:
         data = f.read()
         t = part_1(data)
@@ -86,4 +86,4 @@ def part_1_tests():
         print(part_1(data))
         print(part_2(data))
 
-part_1_tests()
+main()
