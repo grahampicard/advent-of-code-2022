@@ -74,7 +74,6 @@ def scenic_score(i: int, j: int, grid: list) -> int:
         if grid[bottom][j] >= current_tree:
             break
 
-
     return left_visible * right_visible * top_visible * bottom_visible
 
 
